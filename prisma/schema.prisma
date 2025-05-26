@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./carddemo.db"
+}
+
+// Modelo de usuário
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("user")
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  accounts  Account[]
+}
+
+// Modelo de conta
+model Account {
+  id                String   @id @default(uuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accountId         String   @unique
+  active            Boolean  @default(true)
+  currentBalance    Float    @default(0)
+  creditLimit       Float    @default(0)
+  cashCreditLimit   Float    @default(0)
+  openDate          DateTime @default(now())
+  expirationDate    DateTime?
+  reissueDate       DateTime?
+  currCycleCredit   Float    @default(0)
+  currCycleDebit    Float    @default(0)
+  zipCode           String?
+  groupId           String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  cards             Card[]
+  transactions      Transaction[]
+}
+
+// Modelo de cartão
+model Card {
+  id              String   @id @default(uuid())
+  cardNumber      String   @unique
+  accountId       String
+  account         Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  cvv             String
+  embossedName    String
+  expirationDate  DateTime
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  transactions    Transaction[]
+}
+
+// Modelo de transação
+model Transaction {
+  id             String   @id @default(uuid())
+  transactionId  String   @unique
+  type           String
+  category       String
+  source         String
+  description    String
+  amount         Float
+  merchantId     String?
+  merchantName   String?
+  merchantCity   String?
+  merchantZip    String?
+  cardId         String
+  card           Card     @relation(fields: [cardId], references: [id], onDelete: Cascade)
+  accountId      String
+  account        Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  originDate     DateTime @default(now())
+  processDate    DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
