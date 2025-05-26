@@ -1,6 +1,6 @@
 # CardDemo Next.js MVP
 
-This is a modern implementation of the CardDemo credit card management system, built with Next.js, SQLite, and Prisma.
+This is a modern implementation of the [AWS CardDemo](https://github.com/aws-samples/aws-mainframe-modernization-carddemo)  credit card management system, built with Next.js, SQLite, and Prisma.
 
 ## Overview
 
