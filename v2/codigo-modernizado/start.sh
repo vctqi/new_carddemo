@@ -34,6 +34,14 @@ services:
       POSTGRES_DB: carddemo
 EOF
 
+# Validate the main docker-compose.yml file
+echo "Validating docker-compose.yml file..."
+if ! docker compose config > /dev/null; then
+    echo "Error: Your docker-compose.yml file has syntax errors."
+    echo "Please fix the errors and try again."
+    exit 1
+fi
+
 # Test Docker connectivity with a simple container
 echo "Testing Docker connectivity with a simple container..."
 if ! docker compose -f docker-compose.test.yml up -d; then

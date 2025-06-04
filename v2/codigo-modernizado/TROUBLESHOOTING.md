@@ -4,6 +4,15 @@ Este documento fornece orientações para solucionar problemas comuns ao executa
 
 ## Problemas com Docker
 
+### Erro "yaml: line XX: mapping values are not allowed in this context"
+
+Se você encontrar erros relacionados à sintaxe YAML, como "mapping values are not allowed in this context", isso indica problemas de formatação no arquivo docker-compose.yml. Para resolver:
+
+1. Execute `docker compose config` para validar a sintaxe do arquivo
+2. Verifique problemas com aspas ou caracteres especiais em comandos
+3. Use o operador de bloco `>` ou `|` para comandos multi-linha em YAML
+4. Evite combinações complexas de aspas aninhadas
+
 ### Erro "tls: bad record MAC"
 
 Se você encontrar o erro `failed to solve: failed to compute cache key: failed to copy: local error: tls: bad record MAC`, isso indica um problema na comunicação TLS entre o Docker e o Docker Hub. Para resolver:
