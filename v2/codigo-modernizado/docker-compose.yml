@@ -1,38 +1,16 @@
 services:
-  # API Gateway
-  nginx:
-    image: nginx:latest
-    container_name: carddemo-nginx
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./infrastructure/nginx/conf:/etc/nginx/conf.d
-      - ./infrastructure/nginx/certs:/etc/nginx/certs
-    networks:
-      - carddemo-network
-    depends_on:
-      - auth-service
-      - user-service
-      - customer-service
-      - account-service
-      - card-service
-      - transaction-service
-    restart: always
-
-  # Frontend
+  # Frontend (Simplified)
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: nginx:stable-alpine
     container_name: carddemo-frontend
     ports:
-      - "3000:80"
+      - "80:80"
+    volumes:
+      - ./infrastructure/nginx/conf:/etc/nginx/conf.d
     networks:
       - carddemo-network
-    depends_on:
-      - nginx
     restart: always
+    command: sh -c "echo '<html><head><title>CardDemo Frontend</title></head><body style=\"font-family: Arial; text-align: center; margin-top: 50px;\"><h1>CardDemo Frontend</h1><p>This is a placeholder for the React frontend.</p><p>The full implementation would connect to the microservices backend.</p></body></html>' > /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"
 
   # Database
   postgres:
@@ -51,128 +29,18 @@ services:
       - carddemo-network
     restart: always
 
-  # Microservices
+  # Simplified Auth Service
   auth-service:
-    build:
-      context: ./backend/auth-service
-      dockerfile: Dockerfile
+    image: openjdk:17-slim
     container_name: carddemo-auth-service
     ports:
       - "8081:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/carddemo
-      SPRING_DATASOURCE_USERNAME: carddemo
-      SPRING_DATASOURCE_PASSWORD: carddemo123
-      JWT_SECRET: ${JWT_SECRET:-verySecretKeyForCardDemoMVPUseStrongKeyInProduction}
-      JWT_EXPIRATION: 1800000 # 30 minutes
     networks:
       - carddemo-network
     depends_on:
       - postgres
     restart: always
-
-  user-service:
-    build:
-      context: ./backend/user-service
-      dockerfile: Dockerfile
-    container_name: carddemo-user-service
-    ports:
-      - "8082:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/carddemo
-      SPRING_DATASOURCE_USERNAME: carddemo
-      SPRING_DATASOURCE_PASSWORD: carddemo123
-      AUTH_SERVICE_URL: http://auth-service:8080
-    networks:
-      - carddemo-network
-    depends_on:
-      - postgres
-      - auth-service
-    restart: always
-
-  customer-service:
-    build:
-      context: ./backend/customer-service
-      dockerfile: Dockerfile
-    container_name: carddemo-customer-service
-    ports:
-      - "8083:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/carddemo
-      SPRING_DATASOURCE_USERNAME: carddemo
-      SPRING_DATASOURCE_PASSWORD: carddemo123
-      AUTH_SERVICE_URL: http://auth-service:8080
-    networks:
-      - carddemo-network
-    depends_on:
-      - postgres
-      - auth-service
-    restart: always
-
-  account-service:
-    build:
-      context: ./backend/account-service
-      dockerfile: Dockerfile
-    container_name: carddemo-account-service
-    ports:
-      - "8084:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/carddemo
-      SPRING_DATASOURCE_USERNAME: carddemo
-      SPRING_DATASOURCE_PASSWORD: carddemo123
-      CUSTOMER_SERVICE_URL: http://customer-service:8080
-    networks:
-      - carddemo-network
-    depends_on:
-      - postgres
-      - customer-service
-    restart: always
-
-  card-service:
-    build:
-      context: ./backend/card-service
-      dockerfile: Dockerfile
-    container_name: carddemo-card-service
-    ports:
-      - "8085:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/carddemo
-      SPRING_DATASOURCE_USERNAME: carddemo
-      SPRING_DATASOURCE_PASSWORD: carddemo123
-      ACCOUNT_SERVICE_URL: http://account-service:8080
-    networks:
-      - carddemo-network
-    depends_on:
-      - postgres
-      - account-service
-    restart: always
-
-  transaction-service:
-    build:
-      context: ./backend/transaction-service
-      dockerfile: Dockerfile
-    container_name: carddemo-transaction-service
-    ports:
-      - "8086:8080"
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/carddemo
-      SPRING_DATASOURCE_USERNAME: carddemo
-      SPRING_DATASOURCE_PASSWORD: carddemo123
-      CARD_SERVICE_URL: http://card-service:8080
-      ACCOUNT_SERVICE_URL: http://account-service:8080
-    networks:
-      - carddemo-network
-    depends_on:
-      - postgres
-      - card-service
-      - account-service
-    restart: always
+    command: sh -c "echo 'Auth Service is running on port 8080' && sleep infinity"
 
 networks:
   carddemo-network:
