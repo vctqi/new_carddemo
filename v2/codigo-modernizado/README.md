@@ -169,3 +169,34 @@ Each microservice provides its own API documentation using Swagger/OpenAPI:
 ## License
 
 This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
+
+## Troubleshooting
+
+### Docker Image Build Issues
+
+If you encounter errors during the Docker image build process, try the following:
+
+1. **Pull base images manually before building**:
+   ```bash
+   docker pull amazoncorretto:17-alpine
+   docker pull maven:3.9-amazoncorretto-17
+   docker pull nginx:stable-alpine
+   docker pull postgres:14-alpine
+   docker pull node:18-alpine
+   ```
+
+2. **Clean Docker cache**:
+   ```bash
+   docker compose build --no-cache
+   ```
+
+3. **Check Docker connectivity**:
+   Ensure your Docker daemon has internet connectivity to pull images from Docker Hub.
+
+4. **Check disk space**:
+   Make sure you have enough free disk space for building and running the containers.
+
+5. **Verify Docker version**:
+   This application was tested with Docker 20.10.x and Docker Compose 2.x. Run `docker --version` and `docker compose version` to check your versions.
+
+If you continue to experience issues, please report them by opening an issue in the repository.
